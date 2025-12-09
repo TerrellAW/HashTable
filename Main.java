@@ -3,7 +3,11 @@ import java.util.*;
 public class Main
 {
 	public static void main(String args[]) {
-		Hashtable<Integer, String> table = new Hashtable<>(20);
+		final int size = 20;
+		int readCount = 0;
+		int numElements = 0;
+		double packingDensity = 0;
+		Hashtable<Integer, String> table = new Hashtable<>(size);
 
 		table.put(2, "A");
 		table.put(4, "B");
@@ -22,8 +26,42 @@ public class Main
 		table.put(16, "O");
 		table.put(1, "P");
 
+		System.out.println("\nSingle Pass Loading");
+		System.out.println("HSH  |  KEY  |  VAL");
 		for (Integer key : table.keySet()) {
-			System.out.println(key + "\t" + table.get(key));
+			// Read and increment count
+			String value = table.get(key);
+			readCount++;
+			
+			// Packing density
+			numElements++;
+			packingDensity = (double) numElements / size;
+
+			System.out.println(key.hashCode() % size + "\t" + key + "\t" + table.get(key));
 		}
+
+		System.out.println("Single Pass Stats");
+		System.out.println("Total successful reads: " + readCount);
+		System.out.println("Packing density: " + packingDensity);
+		readCount = 0;
+		numElements = 0;
+
+		System.out.println("\nDouble Pass Loading");
+		System.out.println("HSH  |  KEY  |  VAL");
+		for (Integer key : table.keySet()) {
+			// Read and increment count
+			String value = table.get(key);
+			readCount++;
+
+			// Packing density
+			numElements++;
+			packingDensity = (double) numElements / (size * 2);
+
+			System.out.println(key.hashCode() % (size * 2) + "\t" + key + "\t" + table.get(key));
+		}
+
+		System.out.println("Double Pass Stats");
+		System.out.println("Total successful reads: " + readCount);
+		System.out.println("Packing density: " + packingDensity);
 	}
 }
